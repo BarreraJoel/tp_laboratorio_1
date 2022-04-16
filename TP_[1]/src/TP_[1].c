@@ -1,9 +1,7 @@
 /*
  ============================================================================
- *	Name     : TP_[1]
- *
+ *	Name     : TP_[1].c
  *	Author   : Joel Barrera
- *
  ============================================================================
 */
 
@@ -13,6 +11,7 @@
 #include "calcularCostos.h"
 #include "informarResultados.h"
 #include "imprimirDatosForzados.h"
+#include "confirmarDatos.h"
 
 int main(void)
 {
@@ -25,6 +24,9 @@ int main(void)
 	int primerOpcion;
 	int segundaOpcion;
 	int tercerOpcion;
+	char confirmacionKm;
+	char confirmacionAerolineas;
+	char confirmacionLatam;
 	float precioDebitoAero;
 	float precioCreditoAero;
 	float precioConBitcoinAero;
@@ -52,35 +54,48 @@ int main(void)
 		{
 			case 1:
 				system("cls");
-				if(kilometros >= 1 && primerOpcion == 1)
+				if(confirmacionKm == 's')
 				{
 					printf("\nYa ingreso los kilometros\n");
 				}
 				else
 				{
-					getNumeroFlotante(&kilometros, "\nIngrese los kilometros: ", "\nLa cantidad ingresada no es valida\n", 1, 1000000, 3);
+					do
+					{
+						getNumeroFlotante(&kilometros, "\nIngrese los kilometros: ", "\nLa cantidad ingresada no es valida\n", 1, 1000000, 3);
+						if(kilometros >= 1)
+						{
+							confirmar(&confirmacionKm);
+						}
+					}while(confirmacionKm == 'n');
 					primerOpcion = 1;
 				}
 				break;
 			case 2:
 				system("cls");
-				if(precioAerolineas >= 1 && precioLatam >= 1 && segundaOpcion == 1)
+				if(confirmacionAerolineas == 's' && confirmacionLatam == 's')
 				{
 					printf("\nYa ingreso los precios de vuelos\n");
 				}
 				else
 				{
 					system("cls");
-					if(precioAerolineas < 1)
+					do
 					{
 						getNumeroFlotante(&precioAerolineas, "\nIngrese el precio de vuelo para Aerolineas Argentinas: ", "\nEl precio ingresado no es valido\n", 1, 10000000, 3);
-					}
-
-					if(precioLatam < 1)
+						if(precioAerolineas >= 1)
+						{
+							confirmar(&confirmacionAerolineas);
+						}
+					}while(confirmacionAerolineas == 'n');
+					do
 					{
 						getNumeroFlotante(&precioLatam, "\nIngrese el precio de vuelo para Latam: ", "\nEl precio ingresado no es valido\n", 1, 10000000, 3);
-					}
-
+						if(precioAerolineas >= 1)
+						{
+							confirmar(&confirmacionLatam);
+						}
+					}while(confirmacionLatam == 'n');
 					segundaOpcion = 1;
 				}
 				break;
@@ -90,7 +105,7 @@ int main(void)
 				{
 					printf("\nYa se calcularon los costos\n");
 				}
-				else if(segundaOpcion == 1)
+				else if(primerOpcion == 1 && segundaOpcion == 1)
 				{
 					calcularPrecioDebito(&precioDebitoAero, &precioDebitoLatam, precioAerolineas, precioLatam);
 					calcularPrecioCredito(&precioCreditoAero, &precioCreditoLatam, precioAerolineas, precioLatam);
@@ -106,7 +121,6 @@ int main(void)
 				break;
 			case 4:
 				system("cls");
-
 				if(tercerOpcion == 1)
 				{
 					informarResultados(kilometros, precioAerolineas, precioLatam, precioDebitoAero, precioCreditoAero, precioConBitcoinAero, precioUnitarioAero, precioDebitoLatam, precioCreditoLatam, precioConBitcoinLatam, precioUnitarioLatam, diferenciaPrecio);
@@ -126,7 +140,6 @@ int main(void)
 				printf("\nLa opcion ingresada no es valida\n");
 				break;
 		}
-
 	}while(opcionMenu != 6);
 
 	system("pause");
