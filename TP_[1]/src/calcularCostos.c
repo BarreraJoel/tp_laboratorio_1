@@ -10,37 +10,37 @@
 #define DESCUENTO 10
 #define INTERES 25
 
-int calcularPrecioDebito(float* precioDebitoAero, float* precioDebitoLatam, float precioAerolineas, float precioLatam)
+int calcularPrecioDebito(float* pPrecioDebitoAero, float* pPrecioDebitoLatam, float precioAerolineas, float precioLatam)
 {
 	int retorno;
 	retorno = -1;
 
-	if(precioDebitoAero != NULL && precioDebitoLatam != NULL)
+	if(pPrecioDebitoAero != NULL && pPrecioDebitoLatam != NULL)
 	{
-		*precioDebitoAero = precioAerolineas - precioAerolineas * DESCUENTO/100;
-		*precioDebitoLatam = precioLatam - precioLatam * DESCUENTO/100;
+		*pPrecioDebitoAero = precioAerolineas - precioAerolineas * DESCUENTO/100;
+		*pPrecioDebitoLatam = precioLatam - precioLatam * DESCUENTO/100;
 		retorno = 1;
 	}
 
 	return retorno;
 }
 
-int calcularPrecioCredito(float* precioCreditoAero, float* precioCreditoLatam, float precioAerolineas, float precioLatam)
+int calcularPrecioCredito(float* pPrecioCreditoAero, float* pPrecioCreditoLatam, float precioAerolineas, float precioLatam)
 {
 	int retorno;
 	retorno = -1;
 
-	if(precioCreditoAero != NULL && precioCreditoLatam != NULL)
+	if(pPrecioCreditoAero != NULL && pPrecioCreditoLatam != NULL)
 	{
-		*precioCreditoAero = precioAerolineas + precioAerolineas * INTERES / 100;
-		*precioCreditoLatam = precioLatam + precioLatam * INTERES / 100;
+		*pPrecioCreditoAero = precioAerolineas + precioAerolineas * INTERES / 100;
+		*pPrecioCreditoLatam = precioLatam + precioLatam * INTERES / 100;
 		retorno = 1;
 	}
 
 	return retorno;
 }
 
-int calcularPrecioConBitcoin(float* precioConBitcoinAero, float* precioConBitcoinLatam, float precioAerolineas, float precioLatam)
+int calcularPrecioConBitcoin(float* pPrecioConBitcoinAero, float* pPrecioConBitcoinLatam, float precioAerolineas, float precioLatam)
 {
 	int retorno;
 	float precioBitcoin;
@@ -48,45 +48,45 @@ int calcularPrecioConBitcoin(float* precioConBitcoinAero, float* precioConBitcoi
 	retorno = -1;
 	precioBitcoin = 4606954.55;
 
-	if(precioConBitcoinAero != NULL && precioConBitcoinLatam != NULL)
+	if(pPrecioConBitcoinAero != NULL && pPrecioConBitcoinLatam != NULL)
 	{
-		*precioConBitcoinAero = precioAerolineas / precioBitcoin;
-		*precioConBitcoinLatam = precioLatam / precioBitcoin;
+		*pPrecioConBitcoinAero = precioAerolineas / precioBitcoin;
+		*pPrecioConBitcoinLatam = precioLatam / precioBitcoin;
 		retorno = 1;
 	}
 
 	return retorno;
 }
 
-int calcularPrecioUnitario(float* precioUnitarioAero, float* precioUnitarioLatam , float km, float precioAerolineas, float precioLatam)
+int calcularPrecioUnitario(float* pPrecioUnitarioAero, float* pPrecioUnitarioLatam , float km, float precioAerolineas, float precioLatam)
 {
 	int retorno;
 	retorno = -1;
 
-	if(precioUnitarioAero != NULL && precioUnitarioLatam != NULL)
+	if(pPrecioUnitarioAero != NULL && pPrecioUnitarioLatam != NULL)
 	{
-		*precioUnitarioAero = precioAerolineas / km;
-		*precioUnitarioLatam = precioLatam / km;
+		*pPrecioUnitarioAero = precioAerolineas / km;
+		*pPrecioUnitarioLatam = precioLatam / km;
 		retorno = 1;
 	}
 
 	return retorno;
 }
 
-int calcularDiferenciaPrecio(float* diferenciaPrecio, float precioAerolineas, float precioLatam)
+int calcularDiferenciaPrecio(float* pDiferenciaPrecio, float precioAerolineas, float precioLatam)
 {
 	int retorno;
 	retorno = -1;
 
-	if(diferenciaPrecio != NULL)
+	if(pDiferenciaPrecio != NULL)
 	{
 		if(precioLatam > precioAerolineas)
 		{
-			*diferenciaPrecio = precioLatam - precioAerolineas;
+			*pDiferenciaPrecio = precioLatam - precioAerolineas;
 		}
 		else
 		{
-			*diferenciaPrecio = precioAerolineas - precioLatam;
+			*pDiferenciaPrecio = precioAerolineas - precioLatam;
 		}
 		retorno = 1;
 	}

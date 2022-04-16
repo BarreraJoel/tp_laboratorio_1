@@ -1,10 +1,9 @@
 /*
  ============================================================================
- Name        : TP_.c
- Author      : Joel Barrera
- Version     :
- Copyright   : Your copyright notice
- Description : Hello World in C, Ansi-style
+ *	Name     : TP_[1]
+ *
+ *	Author   : Joel Barrera
+ *
  ============================================================================
 */
 
@@ -129,6 +128,8 @@ int main(void)
 		}
 
 	}while(opcionMenu != 6);
+
+	system("pause");
 
 	return EXIT_SUCCESS;
 }
