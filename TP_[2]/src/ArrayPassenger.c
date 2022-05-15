@@ -46,9 +46,9 @@ int printPassenger(Passenger* list, int length, int id)
 		printf("----------------------------------------------------------------------------------------------------");
 		for(i = 0; i < length; i++)
 		{
-			for(j = 0; j < length; j++)
+			if(list[i].isEmpty == OCUPADO && list[i].id == id)
 			{
-				if(list[i].isEmpty == OCUPADO && list[i].id == id)
+				for(j = 0; j < length; j++)
 				{
 					if(list[i].typePassenger == listaTipos[j].typePassenger)
 					{
@@ -67,9 +67,9 @@ int printPassenger(Passenger* list, int length, int id)
 								break;
 							}
 						}
+						break;
 					}
 				}
-				break;
 			}
 		}
 	}
@@ -106,7 +106,7 @@ int printPassengers(Passenger* list, int length)
 										"%12s"
 										"    %.2f"
 										"%9s"
-										"%10s"
+										" %10s"
 										"%10s\n", list[i].id,list[i].name,list[i].lastName,list[i].price,list[i].flycode,listaTipos[j].descripcion,listaEstados[k].descripcion);
 								break;
 							}
@@ -482,11 +482,14 @@ int sumarPasajes(Passenger list[],int len, float* pResultado)
 	int i;
 	float acumSuma = 0;
 
-	if(list != NULL && len > 0 && pResultado != NULL)
+	if(list != NULL && len > 0)
 	{
-		for(i = 0; i< len; i++)
+		for(i = 0; i < len; i++)
 		{
-			acumSuma += list[i].price;
+			if(list[i].isEmpty == OCUPADO)
+			{
+				acumSuma += list[i].price;
+			}
 		}
 
 		*pResultado = acumSuma;
@@ -495,14 +498,53 @@ int sumarPasajes(Passenger list[],int len, float* pResultado)
 	return retorno;
 }
 
-int ordenarPassengers(Passenger* list, int len)
+int promediarPasajes(float sumaTotal, int contadorAltas, float* pResultado)
+{
+	int retorno = -1;
+	float promedioPasajes;
+
+	if(contadorAltas > 0)
+	{
+		promedioPasajes = sumaTotal / contadorAltas;
+
+		*pResultado = promedioPasajes;
+		retorno = 1;
+	}
+
+	return retorno;
+}
+
+int buscarPasajesPromedio(Passenger* list, int len, int* contPasajeros, float promedio)
+{
+	int retorno = -1;
+	int i;
+
+	if(list != NULL && len > 0 && contPasajeros != NULL)
+	{
+		for(i = 0; i < len; i++)
+		{
+			if(list[i].price > promedio)
+			{
+				contPasajeros++;
+			}
+		}
+		retorno = 1;
+	}
+
+	return retorno;
+}
+
+
+int ordenarPassengers(Passenger* list, int len, int contadorAltas)
 {
 	int retorno = -1;
 	int opcionMenu;
 	int opcionOrden;
 	float sumaTotal;
+	float promedio;
+	int contPasajeros = 0;
 
-	if(list != NULL && len > 0)
+	if(list != NULL && len > 0 && contadorAltas > 0)
 	{
 		if(utn_getNumeroEntero(&opcionMenu, "\nMENU DE OPCIONES"
 				"\n1.Listar pasajeros ordenados alfabéticamente por Apellido y Tipo de pasajero"
@@ -523,11 +565,15 @@ int ordenarPassengers(Passenger* list, int len)
 					}
 					break;
 				case 2:
-					if(sumarPasajes(list,len, &sumaTotal) == 1)
-					{
-						retorno = 1;
-						printf("\nSuma de pasajes: %.2f", sumaTotal);
-					}
+					sumarPasajes(list, len, &sumaTotal);
+					promediarPasajes(sumaTotal, contadorAltas, &promedio);
+					buscarPasajesPromedio(list, len, &contPasajeros, promedio);
+
+					printf("\nSuma de pasajes: %.2f"
+							"\nPromedio de pasajes: %.2f"
+							"\nLa cantidad de pasajeros que superan el precio promedio es: %d", sumaTotal, promedio, contPasajeros);
+					retorno = 1;
+
 					break;
 				case 3:
 					if(utn_getNumeroEntero(&opcionOrden, "\n\n0.Ordenar de manera ascendente\n1.Ordenar de manera descendente\nIngrese una opcion: ", "\nLa opcion ingresada no es valida\n", 0, 1, 3) == 1)

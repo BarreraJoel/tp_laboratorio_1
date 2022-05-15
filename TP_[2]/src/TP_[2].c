@@ -1,8 +1,7 @@
 /*
  ============================================================================
- Name        : TP_[2].c
+ Name        : Trabajo Practico 2
  Author      : Joel Barrera
- Version     :
  Copyright   : Your copyright notice
  Description : Hello World in C, Ansi-style
  ============================================================================
@@ -78,7 +77,7 @@ int main(void)
 				case 4:
 					if(flagOpcionUno == 1 && contadorAltas > 0)
 					{
-						ordenarPassengers(listaPasajeros, MAX_PASAJEROS);
+						ordenarPassengers(listaPasajeros, MAX_PASAJEROS, contadorAltas);
 					}
 					else
 					{
