@@ -63,29 +63,6 @@ int controller_loadFromBinary(char* path , LinkedList* pArrayListPassenger)
     return retorno;
 }
 
-int controller_reordenarID(LinkedList* pArrayListPassenger)
-{
-	int retorno = -1;
-	Passenger* pAuxiliar = NULL;
-	int i;
-
-	if(pArrayListPassenger != NULL)
-	{
-		pAuxiliar = Passenger_new();
-
-		if(pAuxiliar != NULL)
-		{
-			for(i = 0; i < ll_len(pArrayListPassenger);i++)
-			{
-
-			}
-			retorno = 1;
-		}
-	}
-
-	return retorno;
-}
-
 /** \brief Alta de pasajero
  *
  * \param pArrayListPassenger LinkedList* Puntero a LinkedList donde se guardara el empleado cargado
@@ -96,7 +73,7 @@ int controller_addPassenger(LinkedList* pArrayListPassenger)
 {
 	int retorno = -1;
 	Passenger* pAuxiliar = NULL;
-	int idIncremental = ll_len(pArrayListPassenger) + 1;
+	int idIncremental = ll_len(pArrayListPassenger)+1;
 
 	if(pArrayListPassenger != NULL)
 	{

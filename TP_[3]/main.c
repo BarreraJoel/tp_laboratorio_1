@@ -14,7 +14,6 @@ int main()
     int banderaOpcionTres = 0;
     int banderaOpcionOcho = 0;
     int banderaOpcionNueve = 0;
-    int confirmacion;
     LinkedList* listaPasajeros = ll_newLinkedList();
 
     do
@@ -35,30 +34,11 @@ int main()
             switch(option)
             {
                 case 1:
-                	if(contAltas > 0)
-                	{
-                		if(utn_getNumeroEntero(&confirmacion,"\n*** ADVERTENCIA ***\nLos pasajeros dados de alta cambiaran de ID"
-															 "\nDesea continuar?\n1.SI\n2.NO\nElija una opcion: ","\nLa opcion ingresada no es valida",1,2,3) == 1 &&
-                											 confirmacion == 1)
-						{
-                			if(controller_reordenarID(listaPasajeros) == 1)
-                			{
-                                if(controller_loadFromText("data.csv",listaPasajeros) == 1)
-                                {
-                                	banderaOpcionUno = 1;
-                                	printf("\n*** Se cargo la lista de pasajeros con exito (txt) ***\n");
-                                }
-                			}
-						}
-                	}
-                	else
-                	{
-                        if(controller_loadFromText("data.csv",listaPasajeros) == 1)
-                        {
-                        	banderaOpcionUno = 1;
-                        	printf("\n*** Se cargo la lista de pasajeros con exito (txt) ***\n");
-                        }
-                	}
+					if(controller_loadFromText("data.csv",listaPasajeros) == 1)
+					{
+						banderaOpcionUno = 1;
+						printf("\n*** Se cargo la lista de pasajeros con exito (txt) ***\n");
+					}
                     break;
                 case 2:
                 	if(controller_loadFromBinary("dataDos.bin", listaPasajeros) == 1)
