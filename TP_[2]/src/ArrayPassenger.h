@@ -12,20 +12,22 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "utn.h"
+#include "input-UTN.h"
 
 #define LIBRE 0
 #define OCUPADO 1
 #define MAX_TEXTO 51
+#define MAX_DESCRIPCION 20
+#define MAX_CODIGO 10
 
 typedef struct{
 	int statusFlight;
-	char descripcion[20];
+	char descripcion[MAX_DESCRIPCION];
 }statusFlight;
 
 typedef struct{
 	int typePassenger;
-	char descripcion[20];
+	char descripcion[MAX_DESCRIPCION];
 }typePassenger;
 
 typedef struct{
@@ -33,190 +35,229 @@ typedef struct{
 	char name[MAX_TEXTO];
 	char lastName[MAX_TEXTO];
 	float price;
-	char flycode[10];
+	char flycode[MAX_CODIGO];
 	int typePassenger;
 	int statusFlight;
 	int isEmpty;
 }Passenger;
 
 /**
- * @brief esta funcion inicializa el array de pasajeros
+ * @brief Obtiene el tipo de pasajero en texto
+ *
+ * @param tipo Tipo de pasajero en numero entero
+ * @param tipoPasajeroStr Cadena de caracteres donde se almacenara el tipo en texto
+ */
+void Passenger_obtenerTipo(int tipo,char tipoPasajeroStr[]);
+/**
+ * @brief Obtiene el estado de vuelo en texto
+ *
+ * @param estado Estado de vuelo de tipo entero
+ * @param statusFlightStr Cadena de caracteres donde se almacenara el estado en texto
+ */
+void Passenger_obtenerEstado(int estado,char statusFlightStr[]);
+
+/**
+ * @brief Inicializa el array de pasajeros
  *
  *
- * @param list Passenger* puntero a un array de pasajero
- * @param len int Array length
- * @return int retorna (-1) si hubo error [largo invalido o puntero nulo] - (0) si se ejecuto bien
+ * @param list Passenger* Array de tipo pasajero
+ * @param len int Largo del array
+ * @return int Retorna (-1) Error: [Largo invalido o Puntero nulo]
+ * 					   ( 0) OK
  */
 int initPassengers(Passenger* list, int len);
 
 /**
- * @brief busca el primer espacio libre del array
+ * @brief Busca el primer espacio libre del array
  *
- * @param list array de una estructura
- * @param len largo del array
- * @return el indice del array en el que hay un espacio libre
+ * @param list Array de tipo pasajero
+ * @param len Largo del array
+ * @return Retorna (-1) Error: [Largo invalido o Puntero nulo]
+ * 				   (Indice) OK
  */
-int buscarEspacioLibrePassenger(Passenger list[], int len);
+int buscarEspacioLibrePassenger(Passenger* list, int len);
 
 /**
- * @brief esta funcion da de alta a un pasajero
+ * @brief Agrega a un array de pasajeros los valores recibidos en la primera posicion libre
  *
- * @param list array de una estructura
- * @param len largo del array
- * @return retorna 1 si se ejecuto bien, -1 si hubo error
- */
-int altaPassengers(Passenger list[], int len);
-
-/**
- * @brief agrega a un array de pasajeros los valores recibidos en la primera posicion libre
- *
- * @param list passenger* puntero a un array pasajeros
- * @param len int largo del array
+ * @param list passenger* Array de tipo pasajero
+ * @param len int Largo del array
  * @param id int variable de tipo int
  * @param name[] char array de nombre
  * @param lastName[] char array de apellido
  * @param price float variable de tipo float
  * @param typePassenger int variable de tipo int
  * @param flycode[] char array de codigo de vuelo
- * @return int retorna (-1) si hubo error [largo invalido, puntero nulo o sin espacio libre] - (0) si se ejecuto bien
+ * @return int retorna (-1) Error: [Largo invalido, Puntero nulo o Sin espacio libre]
+ * 					   ( 0) OK
  */
 int addPassenger(Passenger* list, int len, int id, char name[],char lastName[],float price,int typePassenger, char flycode[], int statusFlight);
 
 /**
- * @brief busca un pasajero en un array en base al id recibido y retorna la posicion
+ * @brief Da de alta a un pasajero
  *
- * @param list Passenger* puntero a un array de pasajeros
- * @param len int largo de array
- * @param id int id del pasajero
- * @return retorna passenger index position or (-1) if [Invalid length or NULL pointer received or passenger not found]
+ * @param list Array de tipo pasajero
+ * @param len Largo del array
+ * @param id Puntero a int que modificara el valor del id
+ * @param ultimoId Puntero a int que guardara el ultimo id dado de alta
+ * @return int retorna (-1) Error: [Largo invalido, Puntero nulo o Sin espacio libre]
+ * 					   ( 1) OK
+ */
+int altaPassengers(Passenger* list, int len, int* id, int* ultimoId);
+
+/**
+ * @brief Busca un pasajero en un array en base al id recibido y retorna la posicion
+ *
+ * @param list Passenger* Array de tipo pasajero
+ * @param len int Largo de array
+ * @param id int ID del pasajero
+ * @return Retorna (-1) Error: [Largo no valido o Puntero NULL o Pasajero no encontrado]
+ * 				   (Indice) OK: Posicion del pasajero
  */
 int findPassengerById(Passenger* list, int len,int id);
 
 /**
- * @brief modifica un pasajero
+ * @brief
  *
- * @param list array de estructura pasajero
- * @param len largo del array
- * @param opcionMenu opcion elegida por el usuario
- * @param indiceId indice del id del pasajero a modificar
- * @return 1 si se ejecuto bien, si hubo error -1
+ * @param list
+ * @param idMinimo
+ * @param idMaximo
+ * @param ultimoId
  */
-int modificarPassenger(Passenger list[], int len, int opcionMenu, int indiceId);
+void buscarMinimoMaximo(Passenger* list, int* idMinimo,int* idMaximo, int ultimoId);
 
 /**
- * @brief funcion que llama a otros procedimientos para modificar pasajeros
+ * @brief Modifica un pasajero
  *
- * @param list array de estructura pasajero
- * @param len largo del array
- * @param contAltas contador de altas dadas
- * @return 1 si se ejecuto bien, si hubo error -1
+ * @param list Array de tipo pasajero
+ * @param len Largo del array
+ * @param opcionMenu Opcion elegida a modificar
+ * @param indiceId Indice del ID del pasajero a modificar
+ * @return Retorna (-1) Error: [Puntero NULL - Opcion no valida]
+ * 				   ( 1) OK
  */
-int modificarPassengers(Passenger list[], int len, int contAltas);
+int modificarPassenger(Passenger* pPasajero, int opcionMenu);
 
 /**
- * @brief elimina un pasajero en base a su Id poniendo el campo isEmpty en libre
+ * @brief Permite el ingreso de una opcion de modificacion
  *
- * @param list Passenger* puntero a un array de pasajeros
- * @param len int largo del array
- * @param id int id del pasajero
- * @return int retorna (-1) si hubo error [largo invalido o puntero nulo o no se pudo encontrar el pasajero] - (0) si se ejecuto bien
+ * @param list Array de tipo pasajero
+ * @param len Largo del array
+ * @param ultimoId Ultimo ID dado de alta
+ * @return Retorna (-1) Error: [Puntero NULL - Largo no valido - ID no valido]
+ * 				   ( 1) OK
+ */
+int modificarPassengers(Passenger* list, int len, int ultimoId);
+
+/**
+ * @brief Elimina un pasajero en base a su ID poniendo el campo isEmpty en libre
+ *
+ * @param list Passenger* Array de tipo pasajero
+ * @param len int Largo del array
+ * @param id int ID del pasajero a eliminar
+ * @return int Retorna (-1) Error [Largo invalido o Puntero nulo o No se pudo encontrar el pasajero]
+ * 					   ( 0) OK
  */
 int removePassenger(Passenger* list, int len, int id);
 
 /**
- * @brief funcion principal para eliminar un pasajero
+ * @brief Permite eliminar un pasajero
  *
- * @param list Passenger* puntero a un array de pasajeros
+ * @param list Array de tipo pasajero
  * @param len largo del array
- * @param contador contador de altas dadas
- * @return 1 si se ejecuto bien, -1 si hubo error
+ * @param ultimoId Ultimo ID dado de alta
+ * @return Retorna (-1) Error: [Largo invalido o Puntero nulo o ID no valido]
+ * 				   ( 1) OK
  */
-int bajaPassengers(Passenger* list, int len, int contador);
-
+int bajaPassengers(Passenger* list, int len, int ultimoId);
 
 /**
- * @brief ordena los elementos del array de pasajeros en base al apellido, el argumento order indica la forma de ordenamiento
+ * @brief Ordena los elementos del array de pasajeros en base al apellido
  *
- * @param list Passenger* puntero a un array de pasajeros
- * @param len int largo del array
- * @param order int [1] indica arriba - [0] indica abajo
- * @return int retorna (-1) si hubo error [largo invalido o puntero nulo] - (0) si se ejecuto bien
+ * @param list Passenger* Array de tipo pasajero
+ * @param len int Largo del array
+ * @param order int Forma de ordenamiento: [1] Ascendente - [0] Descendente
+ * @return int Retorna (-1) Error [Largo invalido o Puntero nulo]
+ * 					   ( 0) OK
  */
 int sortPassengersByName(Passenger* list, int len, int order);
 
 /**
- * @brief imprime en pantalla un pasajero
+ * @brief Ordena los elementos del array de pasajeros en base al codigo de vuelo y estado de vuelo ACTIVO
  *
- * @param list puntero a un array de pasajeros
- * @param length largo del array
- * @param id es el id del pasajero a imprimir
- * @return 1 si se ejecuto bien, -1 si hubo error
- */
-int printPassenger(Passenger* list, int length, int id);
-
-/**
- * @brief imprime en pantalla el array de pasajeros
- *
- * @param list Passenger* puntero a un array de pasajeros
- * @param length int largo del array
- * @return int 1 si se ejecuto bien, -1 si hubo error
- */
-int printPassengers(Passenger* list, int length);
-
-/**
- * @brief ordena los elementos del array de pasajeros en base al codigo de vuelo, el argumento order indica la forma de ordenamiento
- *
- * @param list Passenger* puntero a un array de pasajeros
- * @param len int largo del array
- * @param order int [1] indica arriba - [0] indica abajo
- * @return int retorna (-1) si hubo error [largo invalido o puntero nulo] - (0) si se ejecuto bien
+ * @param list Passenger* Array de tipo pasajero
+ * @param len int Largo del array
+ * @param order int Forma de ordenamiento: [1] Ascendente - [0] Descendente
+ * @return int Retorna (-1) Error [Largo invalido o Puntero nulo]
+ * 					   ( 0) OK
  */
 int sortPassengersByCode(Passenger* list, int len, int order);
 
 /**
- * @brief funcion principal para ordenar el array
+ * @brief Imprime en pantalla un pasajero
  *
- * @param list puntero a un array de pasajeros
- * @param len largo del array
- * @return retorna 1 si se ejecuto bien, -1 si hubo error
+ * @param elemento Elemento del array de pasajeros a imprimir
  */
-int ordenarPassengers(Passenger* list, int len, int contadorAltas);
-
+void printPassenger(Passenger elemento);
 
 /**
- * @brief carga de manera forzada un array de pasajeros
+ * @brief Imprime en pantalla el array de pasajeros
+ *
+ * @param list Passenger* Array de tipo pasajero
+ * @param length int Largo del array
+ * @return int Retorna (-1) Error [Largo invalido o Puntero nulo]
+ * 					   ( 1) OK
+ */
+int printPassengers(Passenger* list, int length);
+
+/**
+ * @brief Realiza diferentes informes en base a la opcion ingresada
+ *
+ * @param list Array de tipo pasajero
+ * @param len Largo del array
+ * @param contadorAltas Contador de altas dadas para las funciones de calculos
+ * @return int Retorna (-1) Error [Largo invalido o Puntero nulo o Contador no valido]
+ * 					   ( 1) OK
+ */
+int informarPassengers(Passenger* list, int len, int contadorAltas);
+
+/**
+ * @brief Carga de manera forzada un array de pasajeros y lo imprime
  *
  */
 void altaForzadaPassenger();
 
 /**
- * @brief suma los pasajes ingresados
+ * @brief Suma los pasajes ingresados
  *
- * @param list array de pasajero
- * @param len largo del array
- * @param pResultado puntero a variable tipo float
- * @return retorna 1 si se ejecuto bien, -1 si hubo error
+ * @param list Array de tipo pasajero
+ * @param len Largo del array
+ * @param pResultado Puntero a float donde se guardara el resultado
+ * @return int Retorna (-1) Error [Largo invalido o Punteros nulos]
+ * 					   ( 1) OK
  */
-int sumarPasajes(Passenger list[],int len, float* pResultado);
+int sumarPasajes(Passenger* list,int len, float* pResultado);
 
 /**
- * @brief calcula el promedio de los pasajes ingresados
+ * @brief Calcula el promedio de los pasajes ingresados
  *
- * @param sumaTotal suma de los pasajes ingresados
- * @param contadorAltas contador de las altas dadas
- * @param pResultado puntero a variable tipo float
- * @return retorna 1 si se ejecuto bien, -1 si hubo error
+ * @param sumaTotal Suma de los pasajes ingresados
+ * @param contadorAltas Contador de las altas dadas
+ * @param pResultado Puntero a float donde se guardara el resultado
+ * @return int Retorna (-1) Error [Largo invalido o Punteros nulos o Contador no valido]
+ * 					   ( 1) OK
  */
 int promediarPasajes(float sumaTotal, int contadorAltas, float* pResultado);
 
 /**
- * @brief busca si hay pasajes que superen el promedio
+ * @brief Busca si hay pasajes que superen el promedio
  *
- * @param list puntero a array de estructura
- * @param len largo del array
- * @param contPasajeros contador de pasajeros
- * @param promedio promedio calculado de los pasajes ingresados
- * @return retorna 1 si se ejecuto bien, -1 si hubo error
+ * @param list Array de tipo pasajero
+ * @param len Largo del array
+ * @param contPasajeros Puntero a int donde se guardara una cantidad
+ * @param promedio Calculo del promedio de los pasajes ingresados
+ * @return int Retorna (-1) Error [Largo invalido o Punteros nulos o Promedio no valido]
+ * 					   ( 1) OK
  */
 int buscarPasajesPromedio(Passenger* list, int len, int* contPasajeros, float promedio);
 
