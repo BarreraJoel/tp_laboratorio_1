@@ -8,13 +8,15 @@
 int main()
 {
 	setbuf(stdout, NULL);
+
+    LinkedList* listaPasajeros = ll_newLinkedList();
     int option;
     int contAltas = 0;
     int banderaOpcionUno = 0;
+    int banderaOpcionDos = 0;
     int banderaOpcionTres = 0;
     int banderaOpcionOcho = 0;
     int banderaOpcionNueve = 0;
-    LinkedList* listaPasajeros = ll_newLinkedList();
 
     do
     {
@@ -34,16 +36,43 @@ int main()
             switch(option)
             {
                 case 1:
-					if(controller_loadFromText("data.csv",listaPasajeros) == 1)
-					{
-						banderaOpcionUno = 1;
-						printf("\n*** Se cargo la lista de pasajeros con exito (txt) ***\n");
-					}
+                	if(banderaOpcionUno == 0 && banderaOpcionDos == 0)
+                	{
+                		if(banderaOpcionTres == 1)
+                		{
+                			controller_reordenarID(listaPasajeros);
+        					if(controller_loadFromText("data.csv",listaPasajeros) == 1)
+        					{
+        						printf("\n*** Se cargo la lista de pasajeros con exito (txt) ***\n");
+        						banderaOpcionUno = 1;
+        					}
+                		}
+                		else
+                		{
+        					if(controller_loadFromText("data.csv",listaPasajeros) == 1)
+        					{
+        						printf("\n*** Se cargo la lista de pasajeros con exito (txt) ***\n");
+        						banderaOpcionUno = 1;
+        					}
+                		}
+                	}
+                	else
+                	{
+                		printf("\n*** El archivo ya se cargo antes ***");
+                	}
                     break;
                 case 2:
-                	if(controller_loadFromBinary("dataDos.bin", listaPasajeros) == 1)
+                	if(banderaOpcionUno == 0 && banderaOpcionDos == 0)
                 	{
-                    	printf("\n*** Se cargo la lista de pasajeros con exito (bin) ***\n");
+                    	if(controller_loadFromBinary("dataDos.bin", listaPasajeros) == 1)
+                    	{
+                        	printf("\n*** Se cargo la lista de pasajeros con exito (bin) ***\n");
+                        	banderaOpcionDos = 1;
+                    	}
+                	}
+                	else
+                	{
+                		printf("\n*** El archivo ya se cargo antes ***");
                 	}
                 	break;
                 case 3:
@@ -51,11 +80,11 @@ int main()
                 	{
                 		contAltas++;
                 		banderaOpcionTres = 1;
-                    	printf("\n*** La carga se realizo con exito ***\n");
+                    	printf("\n*** El alta se realizo con exito ***\n");
                 	}
                 	break;
                 case 4:
-                	if(banderaOpcionUno == 1 || banderaOpcionTres == 1)
+                	if(banderaOpcionUno == 1 || banderaOpcionDos == 1 || banderaOpcionTres == 1 || contAltas > 0)
                 	{
                     	if(controller_editPassenger(listaPasajeros) == 1)
                     	{
@@ -68,7 +97,7 @@ int main()
                 	}
                 	break;
                 case 5:
-                	if(banderaOpcionUno == 1 || banderaOpcionTres == 1)
+                	if(banderaOpcionUno == 1 || banderaOpcionDos == 1 || banderaOpcionTres == 1 || contAltas > 0)
                 	{
                     	if(controller_removePassenger(listaPasajeros) == 1)
                     	{
@@ -85,20 +114,32 @@ int main()
                 	controller_ListPassenger(listaPasajeros);
                 	break;
                 case 7:
-                	//controller_sortPassenger(listaPasajeros);
+                	if(banderaOpcionUno == 1 || banderaOpcionDos == 1 || banderaOpcionTres == 1 || contAltas > 0)
+                	{
+                    	if(controller_sortPassenger(listaPasajeros) == 1)
+                    	{
+                        	printf("\n*** Se ordeno la lista ***\n");
+                    	}
+                	}
                 	break;
                 case 8:
-                	if(controller_saveAsText("dataDos.csv", listaPasajeros) == 1)
-    				{
-                		banderaOpcionOcho = 1;
-                    	printf("\n*** Se guardo la lista de pasajeros con exito (txt) ***\n");
-    				}
+                	if(banderaOpcionUno == 1 || banderaOpcionDos == 1 || contAltas > 0)
+                	{
+                    	if(controller_saveAsText("dataDos.csv", listaPasajeros) == 1)
+        				{
+                        	printf("\n*** Se guardo la lista de pasajeros con exito (txt) ***\n");
+                    		banderaOpcionOcho = 1;
+        				}
+                	}
                 	break;
                 case 9:
-                	if(controller_saveAsBinary("dataDos.bin", listaPasajeros) == 1)
+                	if(banderaOpcionUno == 1 || banderaOpcionDos == 1 || contAltas > 0)
                 	{
-                		banderaOpcionNueve = 1;
-                    	printf("\n*** Se guardo la lista de pasajeros con exito (bin) ***\n");
+                    	if(controller_saveAsBinary("dataDos.bin", listaPasajeros) == 1)
+                    	{
+                        	printf("\n*** Se guardo la lista de pasajeros con exito (bin) ***\n");
+                    		banderaOpcionNueve = 1;
+                    	}
                 	}
                 	break;
                 case 10:

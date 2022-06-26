@@ -24,7 +24,20 @@ typedef struct
 
 Passenger* Passenger_new();
 Passenger* Passenger_newParametros(char* idStr,char* nombreStr,char* apellidoStr,char* precioStr,char* codigoVueloStr,char* tipoPasajeroStr,char* estadoVueloStr);
-void Passenger_delete();
+void Passenger_delete(Passenger* pElemento);
+
+int Passenger_obtenerIDMaximo(LinkedList* this,int* idMinimo,int* idMaximo);
+
+void Passenger_tipoPasajeroATexto(int tipoPasajero, char* tipoPasajeroStr);
+void Passenger_tipoPasajeroANumero(char* tipoPasajeroStr,int* tipoPasajero);
+void Passenger_estadoVueloATexto(int codigoVuelo,char* codigoVueloStr);
+void Passenger_darFormatoCodigoVuelo(char* codigoVuelo);
+
+int Passenger_compararPorNombre(void* pElementoUno, void* pElementoDos);
+int Passenger_compararPorPrecio(void* pElementoUno, void* pElementoDos);
+int Passenger_compararPorCodigoDeVuelo(void* pElementoUno, void* pElementoDos);
+int Passenger_compararPorTipoDePasajero(void* pElementoUno, void* pElementoDos);
+int Passenger_compararPorEstadoDeVuelo(void* pElementoUno, void* pElementoDos);
 
 void Passenger_imprimirUno(Passenger* pElemento);
 int Passenger_listarPasajeros(LinkedList* pArrayListPassenger);
