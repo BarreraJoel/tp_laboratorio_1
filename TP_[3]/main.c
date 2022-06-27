@@ -38,11 +38,22 @@ int main()
                 case 1:
                 	if(banderaOpcionUno == 0 && banderaOpcionDos == 0)
                 	{
-						if(controller_loadFromText("data.csv",listaPasajeros) == 1)
-						{
-							printf("\n*** Se cargo la lista de pasajeros con exito (txt) ***\n");
-							banderaOpcionUno = 1;
-						}
+                		if(banderaOpcionTres == 1)
+                		{
+        					if(controller_loadFromText("data.csv",listaPasajeros) == 1)
+        					{
+        						printf("\n*** Se cargo la lista de pasajeros con exito (txt) ***\n");
+        						banderaOpcionUno = 1;
+        					}
+                		}
+                		else
+                		{
+        					if(controller_loadFromText("data.csv",listaPasajeros) == 1)
+        					{
+        						printf("\n*** Se cargo la lista de pasajeros con exito (txt) ***\n");
+        						banderaOpcionUno = 1;
+        					}
+                		}
                 	}
                 	else
                 	{
@@ -99,7 +110,14 @@ int main()
                 	}
                 	break;
                 case 6:
-                	controller_ListPassenger(listaPasajeros);
+                	if(banderaOpcionUno == 1 || banderaOpcionDos == 1 || banderaOpcionTres == 1 || contAltas > 0)
+                	{
+                    	controller_ListPassenger(listaPasajeros);
+                	}
+                	else
+                	{
+                    	printf("\n*** Primero debe cargar datos ***\n");
+                	}
                 	break;
                 case 7:
                 	if(banderaOpcionUno == 1 || banderaOpcionDos == 1 || banderaOpcionTres == 1 || contAltas > 0)
@@ -108,6 +126,10 @@ int main()
                     	{
                         	printf("\n*** Se ordeno la lista ***\n");
                     	}
+                	}
+                	else
+                	{
+                    	printf("\n*** Debe cargar datos para poder ordenarlos ***\n");
                 	}
                 	break;
                 case 8:
@@ -119,6 +141,10 @@ int main()
                     		banderaOpcionOcho = 1;
         				}
                 	}
+                	else
+                	{
+                    	printf("\n*** Primero debe cargar datos ***\n");
+                	}
                 	break;
                 case 9:
                 	if(banderaOpcionUno == 1 || banderaOpcionDos == 1 || contAltas > 0)
@@ -128,6 +154,10 @@ int main()
                         	printf("\n*** Se guardo la lista de pasajeros con exito (bin) ***\n");
                     		banderaOpcionNueve = 1;
                     	}
+                	}
+                	else
+                	{
+                    	printf("\n*** Primero debe cargar datos ***\n");
                 	}
                 	break;
                 case 10:

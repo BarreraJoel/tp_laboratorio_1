@@ -13,26 +13,60 @@
 #include "LinkedList.h"
 
 /**
- * @brief Busca los id minimo y mayor
+ * @brief Busca el ID maximo
  *
  * @param this Puntero a la LinkedList donde estan los pasajeros
- * @param idMinimo Puntero a int donde se guardara el id minimo
  * @param idMaximo Puntero a int donde se guardara el id maximo
  * @return Retorna (-1) Error: [Lista NULL o Punteros NULL]
  * 				   ( 1) OK
  */
-int Passenger_obtenerIDMaximo(LinkedList* this,int* idMinimo,int* idMaximo)
+int Passenger_obtenerIDMaximo(LinkedList* this,int* idMaximo)
+{
+	int i;
+	int retorno = -1;
+	int maximo;
+	int auxId;
+	int banderaMaximo = 0;
+	Passenger* pAux = NULL;
+
+	if(this != NULL && idMaximo != NULL)
+	{
+		for(i = 0; i < ll_len(this); i++)
+		{
+			pAux = ll_get(this, i);
+			if(pAux != NULL)
+			{
+				Passenger_getId(pAux, &auxId);
+				if(auxId > maximo || banderaMaximo == 0)
+				{
+					maximo = auxId;
+					banderaMaximo = 1;
+				}
+			}
+		}
+		*idMaximo = maximo;
+	}
+	return retorno;
+}
+
+/**
+ * @brief Busca el ID minimo
+ *
+ * @param this Puntero a la LinkedList donde estan los pasajeros
+ * @param idMinimo Puntero a int donde se guardara el id minimo
+ * @return Retorna (-1) Error: [Lista NULL o Punteros NULL]
+ * 				   ( 1) OK
+ */
+int Passenger_obtenerIDMinimo(LinkedList* this,int* idMinimo)
 {
 	int i;
 	int retorno = -1;
 	int minimo;
-	int maximo;
 	int auxId;
 	int banderaMinimo = 0;
-	int banderaMaximo = 0;
 	Passenger* pAux = NULL;
 
-	if(this != NULL && idMinimo != NULL && idMaximo != NULL)
+	if(this != NULL && idMinimo != NULL)
 	{
 		for(i = 0; i < ll_len(this); i++)
 		{
@@ -45,15 +79,9 @@ int Passenger_obtenerIDMaximo(LinkedList* this,int* idMinimo,int* idMaximo)
 					minimo = auxId;
 					banderaMinimo = 1;
 				}
-				if(auxId > maximo || banderaMaximo == 0)
-				{
-					maximo = auxId;
-					banderaMaximo = 1;
-				}
 			}
 		}
 		*idMinimo = minimo;
-		*idMaximo = maximo;
 	}
 	return retorno;
 }
@@ -66,13 +94,13 @@ int Passenger_obtenerIDMaximo(LinkedList* this,int* idMinimo,int* idMaximo)
 void Passenger_imprimirUno(Passenger* pElemento)
 {
 	int auxId;
-	char auxNombre[20];
+	char auxNombre[50];
 	char auxApellido[20];
 	float auxPrecio;
 	int tipoPasajero;
 	char auxTipoPasajeroStr[20];
-	char auxCodigoVuelo[10];
-	char auxEstadoVuelo[10];
+	char auxCodigoVuelo[50];
+	char auxEstadoVuelo[20];
 
 	if(pElemento != NULL)
 	{
@@ -85,7 +113,7 @@ void Passenger_imprimirUno(Passenger* pElemento)
 			Passenger_getEstadoVuelo(pElemento, auxEstadoVuelo) == 0)
 		{
 			Passenger_tipoPasajeroATexto(tipoPasajero, auxTipoPasajeroStr);
-			printf("\n %-5d  %-16s  %-10s     %.2f   %-10s  %-15s %s",auxId,auxNombre,auxApellido,auxPrecio,auxCodigoVuelo,auxTipoPasajeroStr,auxEstadoVuelo);
+			printf("\n %-5d  %-16s  %-10s     %-10.2f   %-10s  %-17s %s",auxId,auxNombre,auxApellido,auxPrecio,auxCodigoVuelo,auxTipoPasajeroStr,auxEstadoVuelo);
 		}
 	}
 }
@@ -104,12 +132,12 @@ int Passenger_listarPasajeros(LinkedList* pArrayListPassenger)
 
 	if(pArrayListPassenger != NULL && ll_len(pArrayListPassenger) > 0)
 	{
-		printf("\n\n--------------------------------------------------------------------------------------------\n");
-		printf("******************************** LISTADO DE PASAJEROS  *************************************");
-		printf("\n--------------------------------------------------------------------------------------------\n");
-		printf(" ID    NOMBRE            APELLIDO         PRECIO      CODIGO       TIPO           ESTADO ");
-		printf("\n--------------------------------------------------------------------------------------------\n");
-		for(i = 0; i < ll_len(pArrayListPassenger); i++)
+		printf("\n\n----------------------------------------------------------------------------------------------\n");
+		printf("********************************* LISTADO DE PASAJEROS  **************************************");
+		printf("\n----------------------------------------------------------------------------------------------\n");
+		printf(" ID    NOMBRE            APELLIDO         PRECIO      CODIGO         TIPO             ESTADO ");
+		printf("\n----------------------------------------------------------------------------------------------\n");
+		for(i = 0; i < ll_len(pArrayListPassenger);i++)
 		{
 			pElemento = ll_get(pArrayListPassenger, i);
 			if(pElemento != NULL)
@@ -121,60 +149,6 @@ int Passenger_listarPasajeros(LinkedList* pArrayListPassenger)
 	}
 
     return retorno;
-}
-
-/**
- * @brief Crea un pasajero y lo retorna
- *
- * @return Retorna Puntero a Passenger
- */
-Passenger* Passenger_new()
-{
-	Passenger* pNuevoPassenger = NULL;
-
-	pNuevoPassenger = (Passenger*)malloc(sizeof(Passenger));
-
-	return pNuevoPassenger;
-}
-
-/**
- * @brief Crea un pasajero con los parametros recibidos y lo retorna
- *
- * @param idStr Cadena de caracteres donde se guarda un id
- * @param nombreStr Cadena de caracteres donde se guarda un nombre
- * @param apellidoStr Cadena de caracteres donde se guarda un apellido
- * @param precioStr Cadena de caracteres donde se guarda un precio
- * @param codigoVueloStr Cadena de caracteres donde se guarda un codigo de vuelo
- * @param tipoPasajeroStr Cadena de caracteres donde se guarda un tipo de pasajero
- * @param estadoVueloStr Cadena de caracteres donde se guarda un estado de vuelo
- * @return Retorna -1 [Punteros NULL] Puntero a Passenger [OK]
- */
-Passenger* Passenger_newParametros(char* idStr,char* nombreStr,char* apellidoStr,char* precioStr,char* codigoVueloStr,char* tipoPasajeroStr,char* estadoVueloStr)
-{
-	Passenger* pNuevoPassenger = NULL;
-	int auxTipoPasajero;
-
-	if(idStr != NULL && nombreStr != NULL && apellidoStr != NULL && precioStr != NULL && codigoVueloStr != NULL && tipoPasajeroStr != NULL && estadoVueloStr != NULL)
-	{
-		pNuevoPassenger = Passenger_new();
-
-		if(pNuevoPassenger != NULL)
-		{
-			Passenger_tipoPasajeroANumero(tipoPasajeroStr, &auxTipoPasajero);
-
-			if(	(Passenger_setId(pNuevoPassenger, atoi(idStr)) != 0) ||
-				(Passenger_setNombre(pNuevoPassenger, nombreStr) != 0) ||
-				(Passenger_setApellido(pNuevoPassenger, apellidoStr) != 0) ||
-				(Passenger_setPrecio(pNuevoPassenger, atof(precioStr)) != 0) ||
-				(Passenger_setCodigoVuelo(pNuevoPassenger, codigoVueloStr) != 0) ||
-				(Passenger_setTipoPasajero(pNuevoPassenger, auxTipoPasajero) != 0) ||
-				(Passenger_setEstadoVuelo(pNuevoPassenger, estadoVueloStr) != 0))
-			{
-				Passenger_delete(pNuevoPassenger);
-			}
-		}
-	}
-	return pNuevoPassenger;
 }
 
 /**
@@ -449,7 +423,7 @@ int Passenger_compararPorCodigoDeVuelo(void* pElementoUno, void* pElementoDos)
  */
 int Passenger_compararPorPrecio(void* pElementoUno, void* pElementoDos)
 {
-	int retorno = -1;
+	int retorno = 0;
 	float auxPrecioUno;
 	float auxPrecioDos;
 
@@ -458,7 +432,18 @@ int Passenger_compararPorPrecio(void* pElementoUno, void* pElementoDos)
 		if( Passenger_getPrecio((Passenger*)pElementoUno, &auxPrecioUno) == 0 &&
 			Passenger_getPrecio((Passenger*)pElementoDos, &auxPrecioDos) == 0)
 		{
-			retorno = auxPrecioUno > auxPrecioUno;
+			if(auxPrecioUno > auxPrecioUno)
+			{
+				retorno = 1;
+			}
+			else if(auxPrecioUno < auxPrecioUno)
+			{
+				retorno = -1;
+			}
+			else
+			{
+				retorno = 0;
+			}
 		}
 	}
 
@@ -512,7 +497,6 @@ int Passenger_compararPorTipoDePasajero(void* pElementoUno, void* pElementoDos)
 		{
 			Passenger_tipoPasajeroATexto(auxTipoUno, auxTipoUnoStr);
 			Passenger_tipoPasajeroATexto(auxTipoDos, auxTipoDosStr);
-
 			retorno = strcmp(auxTipoUnoStr,auxTipoDosStr);
 		}
 	}
@@ -535,6 +519,61 @@ void Passenger_delete(Passenger* pElemento)
 }
 
 /**
+ * @brief Crea un pasajero y lo retorna
+ *
+ * @return Retorna Puntero a Passenger
+ */
+Passenger* Passenger_new()
+{
+	Passenger* pNuevoPassenger = NULL;
+
+	pNuevoPassenger = (Passenger*)malloc(sizeof(Passenger));
+
+	return pNuevoPassenger;
+}
+
+/**
+ * @brief Crea un pasajero con los parametros recibidos y lo retorna
+ *
+ * @param idStr Cadena de caracteres donde se guarda un id
+ * @param nombreStr Cadena de caracteres donde se guarda un nombre
+ * @param apellidoStr Cadena de caracteres donde se guarda un apellido
+ * @param precioStr Cadena de caracteres donde se guarda un precio
+ * @param codigoVueloStr Cadena de caracteres donde se guarda un codigo de vuelo
+ * @param tipoPasajeroStr Cadena de caracteres donde se guarda un tipo de pasajero
+ * @param estadoVueloStr Cadena de caracteres donde se guarda un estado de vuelo
+ * @return Retorna  (NULL) Error: Parametros NULL
+ * 					(Puntero a Passenger): OK
+ */
+Passenger* Passenger_newParametros(char* idStr,char* nombreStr,char* apellidoStr,char* precioStr,char* codigoVueloStr,char* tipoPasajeroStr,char* estadoVueloStr)
+{
+	Passenger* pNuevoPassenger = NULL;
+	int auxTipoPasajero;
+
+	if(idStr != NULL && nombreStr != NULL && apellidoStr != NULL && precioStr != NULL && codigoVueloStr != NULL && tipoPasajeroStr != NULL && estadoVueloStr != NULL)
+	{
+		pNuevoPassenger = Passenger_new();
+
+		if(pNuevoPassenger != NULL)
+		{
+			Passenger_tipoPasajeroANumero(tipoPasajeroStr, &auxTipoPasajero);
+
+			if(	(Passenger_setId(pNuevoPassenger, atoi(idStr)) != 0) ||
+				(Passenger_setNombre(pNuevoPassenger, nombreStr) != 0) ||
+				(Passenger_setApellido(pNuevoPassenger, apellidoStr) != 0) ||
+				(Passenger_setPrecio(pNuevoPassenger, atof(precioStr)) != 0) ||
+				(Passenger_setCodigoVuelo(pNuevoPassenger, codigoVueloStr) != 0) ||
+				(Passenger_setTipoPasajero(pNuevoPassenger, auxTipoPasajero) != 0) ||
+				(Passenger_setEstadoVuelo(pNuevoPassenger, estadoVueloStr) != 0))
+			{
+				Passenger_delete(pNuevoPassenger);
+			}
+		}
+	}
+	return pNuevoPassenger;
+}
+
+/**
  * @brief Setea el ID de un pasajero
  *
  * @param this Puntero a Passenger
@@ -545,7 +584,7 @@ int Passenger_setId(Passenger* this,int id)
 {
 	int retorno = -1;
 
-	if(this != NULL && id >= 0)
+	if(this != NULL && id > 0)
 	{
 		this->id= id;
 		retorno = 0;
@@ -564,7 +603,7 @@ int Passenger_getId(Passenger* this,int* id)
 {
 	int retorno = -1;
 
-	if(this != NULL && id != NULL)
+	if(this != NULL && id!=NULL)
 	{
 		*id = this->id;
 		retorno = 0;
@@ -583,7 +622,7 @@ int Passenger_setNombre(Passenger* this,char* nombre)
 {
 	int retorno = -1;
 
-	if(this != NULL && nombre != NULL)
+	if(this != NULL && nombre!=NULL)
 	{
 		strcpy(this->nombre,nombre);
 		retorno = 0;
@@ -659,7 +698,7 @@ int Passenger_setPrecio(Passenger* this,float precio)
 {
 	int retorno = -1;
 
-	if(this != NULL && precio >= 0)
+	if(this != NULL && precio > 0)
 	{
 		this->precio = precio;
 		retorno = 0;
@@ -721,10 +760,6 @@ int Passenger_getCodigoVuelo(Passenger* this,char* codigoVuelo)
 		strcpy(codigoVuelo,this->codigoVuelo);
 
 		retorno = 0;
-	}
-	else
-	{
-		printf("\nno puede obtener el codigo");
 	}
 	return retorno;
 }
@@ -804,17 +839,6 @@ int Passenger_getEstadoVuelo(Passenger* this,char* estadoVuelo)
 	}
 	return retorno;
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 

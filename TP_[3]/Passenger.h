@@ -26,7 +26,8 @@ Passenger* Passenger_new();
 Passenger* Passenger_newParametros(char* idStr,char* nombreStr,char* apellidoStr,char* precioStr,char* codigoVueloStr,char* tipoPasajeroStr,char* estadoVueloStr);
 void Passenger_delete(Passenger* pElemento);
 
-int Passenger_obtenerIDMaximo(LinkedList* this,int* idMinimo,int* idMaximo);
+int Passenger_obtenerIDMaximo(LinkedList* this,int* idMaximo);
+int Passenger_obtenerIDMinimo(LinkedList* this,int* idMinimo);
 
 void Passenger_tipoPasajeroATexto(int tipoPasajero, char* tipoPasajeroStr);
 void Passenger_tipoPasajeroANumero(char* tipoPasajeroStr,int* tipoPasajero);
@@ -38,6 +39,7 @@ int Passenger_compararPorPrecio(void* pElementoUno, void* pElementoDos);
 int Passenger_compararPorCodigoDeVuelo(void* pElementoUno, void* pElementoDos);
 int Passenger_compararPorTipoDePasajero(void* pElementoUno, void* pElementoDos);
 int Passenger_compararPorEstadoDeVuelo(void* pElementoUno, void* pElementoDos);
+int Passenger_ordenador(LinkedList* this, int (*pFunc)(void* ,void*), int order);
 
 void Passenger_imprimirUno(Passenger* pElemento);
 int Passenger_listarPasajeros(LinkedList* pArrayListPassenger);

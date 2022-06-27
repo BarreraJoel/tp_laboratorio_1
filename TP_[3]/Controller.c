@@ -6,11 +6,70 @@
 #include "parser.h"
 #include "input-UTN.h"
 
+/**
+ * @brief Reordena los ID subidos manualmente
+ *
+ * @param path Direccion del archivo a leer
+ * @param pArrayListPassenger Puntero a LinkedList de donde se obtienen los datos a ordenar
+ * @return -1 [Punteros NULL o Lectura no completada] 1 [OK]
+ */
+int controller_reordenarID(char* path, LinkedList* pArrayListPassenger)
+{
+	int retorno = -1;
+	char auxId[50];
+	char auxNombre[50];
+	char auxApellido[50];
+	char auxPrecio[50];
+	char auxCodigoVuelo[50];
+	char auxTipoPasajero[50];
+	char auxEstadoVuelo[50];
+	int idNuevo;
+	int auxiliarId;
+	int i;
+	int contadorID = 0;
+	Passenger* pAux = NULL;
+	Passenger* pAuxNuevo = NULL;
+	FILE* pArchivo = NULL;
+
+	if(pArrayListPassenger != NULL && path != NULL)
+	{
+		pArchivo = fopen(path,"r");
+		if(pArchivo != NULL)
+		{
+			fscanf(pArchivo,"%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]\n",auxId,auxNombre,auxApellido,auxPrecio,auxCodigoVuelo,auxTipoPasajero,auxEstadoVuelo);
+			do
+			{
+				if(fscanf(pArchivo,"%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]\n",auxId,auxNombre,auxApellido,auxPrecio,auxCodigoVuelo,auxTipoPasajero,auxEstadoVuelo) == 7)
+				{
+					contadorID++;
+				}
+			}while(!feof(pArchivo));
+
+			for(i = 0; i < ll_len(pArrayListPassenger); i++)
+			{
+				pAux = ll_get(pArrayListPassenger, i);
+				if(pAux != NULL)
+				{
+					Passenger_getId(pAux, &auxiliarId);
+					idNuevo = contadorID+auxiliarId;
+					Passenger_setId(pAux, idNuevo);
+					pAuxNuevo = pAux;
+					ll_add(pArrayListPassenger, pAuxNuevo);
+					ll_remove(pArrayListPassenger, i);
+				}
+			}
+		}
+		retorno = 1;
+		fclose(pArchivo);
+	}
+
+	return retorno;
+}
 
 /** \brief Carga los datos de los pasajeros desde el archivo data.csv (modo texto).
  *
- * \param path char* Cadena de} caracteres donde se escribe la ubicacion y nombre del archivo
- * \param pArrayListPassenger LinkedList*
+ * \param path char* Cadena de caracteres donde se escribe la ubicacion y nombre del archivo
+ * \param pArrayListPassenger LinkedList* Puntero a LinkedList de donde se obtienen los datos a cargar
  * \return int Retorna -1 [Punteros NULL o Lectura no completada] 1 [OK]
  *
  */
@@ -24,7 +83,17 @@ int controller_loadFromText(char* path , LinkedList* pArrayListPassenger)
 		pArchivo = fopen(path,"r");
 		if(pArchivo != NULL)
 		{
-			retorno = parser_PassengerFromText(pArchivo, pArrayListPassenger);
+			if(ll_len(pArrayListPassenger) == 0)
+			{
+				retorno = parser_PassengerFromText(pArchivo, pArrayListPassenger);
+			}
+			else
+			{
+				if(controller_reordenarID(path, pArrayListPassenger) == 1)
+				{
+					retorno = parser_PassengerFromText(pArchivo, pArrayListPassenger);
+				}
+			}
 		}
 		fclose(pArchivo);
 	}
@@ -57,6 +126,7 @@ int controller_loadFromBinary(char* path , LinkedList* pArrayListPassenger)
     return retorno;
 }
 
+
 /** \brief Alta de pasajero
  *
  * \param pArrayListPassenger LinkedList* Puntero a LinkedList donde se guardara el empleado cargado
@@ -67,51 +137,96 @@ int controller_addPassenger(LinkedList* pArrayListPassenger)
 {
 	int retorno = -1;
 	Passenger* pAuxiliar = NULL;
-	int idIncremental = ll_len(pArrayListPassenger)+1;
-	char auxNombre[50];
-	char auxApellido[50];
+	int idIncremental = 1;
+	char auxNombre[20];
+	char auxApellido[20];
 	float auxPrecio;
 	int auxTipoPasajero;
 	char auxCodigoVuelo[10];
 	int auxEstadoVueloOpcion;
 	char auxEstadoVuelo[10];
+	int idMaximo;
 
 	if(pArrayListPassenger != NULL)
 	{
-		pAuxiliar = Passenger_new();
-
-		if(pAuxiliar != NULL)
+		if(ll_len(pArrayListPassenger) == 0)
 		{
-			if( utn_getNombre(auxNombre,"\nIngrese nombre: ","\nEl nombre ingresado no es valido\n",4,50,3) == 1 &&
-				utn_getNombre(auxApellido,"\nIngrese apellido: ","\nEl apellido ingresado no es valido\n",4,50,3) == 1 &&
-				utn_getNumeroFlotante(&auxPrecio,"\nIngrese el precio de vuelo: ","\nEl precio ingresado no es valido\n",50000,500000,3) == 1 &&
-				utn_getTextoAlfanumerico(auxCodigoVuelo,"\nIngrese el codigo de vuelo: ","\nEl codigo ingresado no es valido\n",4,10,3) == 1 &&
-				utn_getNumeroEntero(&auxTipoPasajero,"\n*** TIPO DE PASAJERO ***"
-													 "\n1.FirstClass"
-													 "\n2.ExecutiveClass"
-													 "\n3.EconomyClass"
-													 "\nElija una opcion: ","\nEl tipo ingresado no es valido\n",1,3,3) == 1 &&
-				utn_getNumeroEntero(&auxEstadoVueloOpcion,"\n*** ESTADO DE VUELO***"
-														  "\n1.Aterrizado"
-														  "\n2.En Horario"
-														  "\n3.En Vuelo"
-														  "\n4.Demorado"
-														  "\nElija una opcion: ","\nEl estado ingresado no es valido\n",1,4,3) == 1)
-			{
-				Passenger_darFormatoCodigoVuelo(auxCodigoVuelo);
-				Passenger_estadoVueloATexto(auxEstadoVueloOpcion, auxEstadoVuelo);
+			pAuxiliar = Passenger_new();
 
-				if(	Passenger_setId(pAuxiliar, idIncremental) == 0 &&
-					Passenger_setNombre(pAuxiliar, auxNombre) == 0 &&
-					Passenger_setApellido(pAuxiliar, auxApellido) == 0 &&
-					Passenger_setPrecio(pAuxiliar, auxPrecio) == 0 &&
-					Passenger_setCodigoVuelo(pAuxiliar, auxCodigoVuelo) == 0 &&
-					Passenger_setTipoPasajero(pAuxiliar, auxTipoPasajero) == 0 &&
-					Passenger_setEstadoVuelo(pAuxiliar, auxEstadoVuelo) == 0)
+			if(pAuxiliar != NULL)
+			{
+				if( utn_getNombre(auxNombre,"\nIngrese nombre: ","\nEl nombre ingresado no es valido\n",4,20,3) == 1 &&
+					utn_getNombre(auxApellido,"\nIngrese apellido: ","\nEl apellido ingresado no es valido\n",4,20,3) == 1 &&
+					utn_getNumeroFlotante(&auxPrecio,"\nIngrese el precio de vuelo: ","\nEl precio ingresado no es valido\n",100000,500000,3) == 1 &&
+					utn_getTextoAlfanumerico(auxCodigoVuelo,"\nIngrese el codigo de vuelo: ","\nEl codigo ingresado no es valido\n",4,10,3) == 1 &&
+					utn_getNumeroEntero(&auxTipoPasajero,"\n*** TIPO DE PASAJERO ***"
+														 "\n1.FirstClass"
+														 "\n2.ExecutiveClass"
+														 "\n3.EconomyClass"
+														 "\nElija una opcion: ","\nEl tipo ingresado no es valido\n",1,3,3) == 1 &&
+					utn_getNumeroEntero(&auxEstadoVueloOpcion,"\n*** ESTADO DE VUELO***"
+															  "\n1.Aterrizado"
+															  "\n2.En Horario"
+															  "\n3.En Vuelo"
+															  "\n4.Demorado"
+															  "\nElija una opcion: ","\nEl estado ingresado no es valido\n",1,4,3) == 1)
 				{
-					ll_add(pArrayListPassenger, pAuxiliar);
-					idIncremental++;
-					retorno = 1;
+					Passenger_darFormatoCodigoVuelo(auxCodigoVuelo);
+					Passenger_estadoVueloATexto(auxEstadoVueloOpcion, auxEstadoVuelo);
+
+					if(	Passenger_setId(pAuxiliar, idIncremental) == 0 &&
+						Passenger_setNombre(pAuxiliar, auxNombre) == 0 &&
+						Passenger_setApellido(pAuxiliar, auxApellido) == 0 &&
+						Passenger_setPrecio(pAuxiliar, auxPrecio) == 0 &&
+						Passenger_setCodigoVuelo(pAuxiliar, auxCodigoVuelo) == 0 &&
+						Passenger_setTipoPasajero(pAuxiliar, auxTipoPasajero) == 0 &&
+						Passenger_setEstadoVuelo(pAuxiliar, auxEstadoVuelo) == 0)
+					{
+						ll_add(pArrayListPassenger,pAuxiliar);
+						idIncremental++;
+						retorno = 1;
+					}
+				}
+			}
+		}
+		else
+		{
+			Passenger_obtenerIDMaximo(pArrayListPassenger, &idMaximo);
+			idIncremental = idMaximo+1;
+			printf("\nidmaximo: %d",idIncremental);
+			pAuxiliar = Passenger_new();
+			if(pAuxiliar != NULL)
+			{
+				if( utn_getNombre(auxNombre,"\nIngrese nombre: ","\nEl nombre ingresado no es valido\n",4,20,3) == 1 &&
+					utn_getNombre(auxApellido,"\nIngrese apellido: ","\nEl apellido ingresado no es valido\n",4,20,3) == 1 &&
+					utn_getNumeroFlotante(&auxPrecio,"\nIngrese el precio de vuelo: ","\nEl precio ingresado no es valido\n",100000,500000,3) == 1 &&
+					utn_getTextoAlfanumerico(auxCodigoVuelo,"\nIngrese el codigo de vuelo: ","\nEl codigo ingresado no es valido\n",4,10,3) == 1 &&
+					utn_getNumeroEntero(&auxTipoPasajero,"\n*** TIPO DE PASAJERO ***"
+														 "\n1.FirstClass"
+														 "\n2.ExecutiveClass"
+														 "\n3.EconomyClass"
+														 "\nElija una opcion: ","\nEl tipo ingresado no es valido\n",1,3,3) == 1 &&
+					utn_getNumeroEntero(&auxEstadoVueloOpcion,"\n*** ESTADO DE VUELO***"
+															  "\n1.Aterrizado"
+															  "\n2.En Horario"
+															  "\n3.En Vuelo"
+															  "\n4.Demorado"
+															  "\nElija una opcion: ","\nEl estado ingresado no es valido\n",1,4,3) == 1)
+				{
+					Passenger_darFormatoCodigoVuelo(auxCodigoVuelo);
+					Passenger_estadoVueloATexto(auxEstadoVueloOpcion, auxEstadoVuelo);
+
+					if(	Passenger_setId(pAuxiliar, idIncremental) == 0 &&
+						Passenger_setNombre(pAuxiliar, auxNombre) == 0 &&
+						Passenger_setApellido(pAuxiliar, auxApellido) == 0 &&
+						Passenger_setPrecio(pAuxiliar, auxPrecio) == 0 &&
+						Passenger_setCodigoVuelo(pAuxiliar, auxCodigoVuelo) == 0 &&
+						Passenger_setTipoPasajero(pAuxiliar, auxTipoPasajero) == 0 &&
+						Passenger_setEstadoVuelo(pAuxiliar, auxEstadoVuelo) == 0)
+					{
+						ll_add(pArrayListPassenger,pAuxiliar);
+						retorno = 1;
+					}
 				}
 			}
 		}
@@ -139,7 +254,8 @@ int controller_editPassenger(LinkedList* pArrayListPassenger)
 
 	if(pArrayListPassenger != NULL)
 	{
-		Passenger_obtenerIDMaximo(pArrayListPassenger, &idMinimo, &idMaximo);
+		Passenger_obtenerIDMaximo(pArrayListPassenger, &idMaximo);
+		Passenger_obtenerIDMinimo(pArrayListPassenger, &idMinimo);
 		Passenger_listarPasajeros(pArrayListPassenger);
 		if(utn_getNumeroEntero(&idModificacion, "\nIngrese el ID a modificar: ","\nEl ID ingresado no es valido\n",idMinimo,idMaximo,3) == 1)
 		{
@@ -173,6 +289,10 @@ int controller_editPassenger(LinkedList* pArrayListPassenger)
 				}
 			}
 		}
+		else
+		{
+			printf("\nEl ID ingresado no es valido\n");
+		}
 		free(pAuxModificacion);
 	}
 
@@ -197,9 +317,9 @@ int controller_removePassenger(LinkedList* pArrayListPassenger)
 
 	if(pArrayListPassenger != NULL)
 	{
-		Passenger_obtenerIDMaximo(pArrayListPassenger, &idMinimo, &idMaximo);
+		Passenger_obtenerIDMaximo(pArrayListPassenger, &idMaximo);
+		Passenger_obtenerIDMinimo(pArrayListPassenger, &idMinimo);
 		Passenger_listarPasajeros(pArrayListPassenger);
-		printf("\nmin: %d   max: %d ", idMinimo,idMaximo);
 		if(utn_getNumeroEntero(&idBaja, "\n\nIngrese el ID a dar de baja: ","\nEl ID ingresado no es valido\n",idMinimo,idMaximo,3) == 1)
 		{
 			indicePasajero = Passenger_buscarIndicePorID(pArrayListPassenger, idBaja);
@@ -262,45 +382,39 @@ int controller_sortPassenger(LinkedList* pArrayListPassenger)
 
 	if(pArrayListPassenger != NULL)
 	{
-		if(utn_getNumeroEntero(&opcionOrden,"\n*** MENU DE ORDENAMIENTO ***"
+		if( utn_getNumeroEntero(&opcionOrden,"\n*** MENU DE ORDENAMIENTO ***"
 											"\n1. Ordenar por Nombre"
 											"\n2. Ordenar por Precio"
 											"\n3. Ordenar por Tipo de Pasajero"
 											"\n4. Ordenar por Codigo de Vuelo"
 											"\n5. Ordenar por Estado de Vuelo"
-											"\nElija una opcion: ", "\nLa opcion elegida no es valida\n",1,5,3) == 1)
+											"\nElija una opcion: ", "\nLa opcion elegida no es valida\n",1,5,3) == 1 &&
+			utn_getNumeroEntero(&orden, "\n0. Ordenar de forma descendente"
+										"\n1. Ordenar de forma ascendente"
+										"\nElija una opcion: ", "\nLa opcion elegida no es valida\n",0,1,3) == 1)
 		{
-			if(utn_getNumeroEntero(&orden,  "\n0. Ordenar de forma descendente"
-											"\n1. Ordenar de forma ascendente"
-											"\nElija una opcion: ", "\nLa opcion elegida no es valida\n",0,1,3) == 1)
+			switch(opcionOrden)
 			{
-				switch(opcionOrden)
-				{
-					case 1:
-						pFunc = Passenger_compararPorNombre;
-						ll_sort(pArrayListPassenger, pFunc, orden);
-						break;
-					case 2:
-						pFunc = Passenger_compararPorPrecio;
-						ll_sort(pArrayListPassenger, pFunc, orden);
-						break;
-					case 3:
-						pFunc = Passenger_compararPorTipoDePasajero;
-						ll_sort(pArrayListPassenger, pFunc, orden);
-						break;
-					case 4:
-						pFunc = Passenger_compararPorCodigoDeVuelo;
-						ll_sort(pArrayListPassenger, pFunc, orden);
-						break;
-					case 5:
-						pFunc = Passenger_compararPorEstadoDeVuelo;
-						ll_sort(pArrayListPassenger, pFunc, orden);
-						break;
-					default:
-						printf("\nLa opcion elegida no es valida\n");
-						break;
-				}
+				case 1:
+					pFunc = Passenger_compararPorNombre;
+					break;
+				case 2:
+					pFunc = Passenger_compararPorPrecio;
+					break;
+				case 3:
+					pFunc = Passenger_compararPorTipoDePasajero;
+					break;
+				case 4:
+					pFunc = Passenger_compararPorCodigoDeVuelo;
+					break;
+				case 5:
+					pFunc = Passenger_compararPorEstadoDeVuelo;
+					break;
+				default:
+					printf("\nLa opcion elegida no es valida\n");
+					break;
 			}
+			ll_sort(pArrayListPassenger, pFunc, orden);
 			retorno = 1;
 		}
 	}

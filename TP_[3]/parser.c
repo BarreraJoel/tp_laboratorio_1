@@ -15,7 +15,7 @@ int parser_PassengerFromText(FILE* pFile , LinkedList* pArrayListPassenger)
 {
 	int retorno = -1;
 	Passenger* pAuxTexto = NULL;
-	char auxId[50];
+	char auxId[10];
 	char auxNombre[50];
 	char auxApellido[50];
 	char auxPrecio[50];
@@ -58,7 +58,7 @@ int parser_PassengerFromText(FILE* pFile , LinkedList* pArrayListPassenger)
  *
  * @param pFile Puntero al archivo con datos de pasajeros (binario)
  * @param pArrayListPassenger LinkedList donde se van a almacenar los datos cargados
- * @return Retorna -1 [Punteros NULL] 1 [OK] 0 [Lectura no completada]
+ * @return Retorna -1 [Punteros NULL] 1 [OK]
  */
 int parser_PassengerFromBinary(FILE* pFile , LinkedList* pArrayListPassenger)
 {
@@ -70,19 +70,14 @@ int parser_PassengerFromBinary(FILE* pFile , LinkedList* pArrayListPassenger)
 		pAuxBinario = Passenger_new();
 		if(pAuxBinario != NULL)
 		{
-			retorno = 1;
 			do
 			{
 				if(fread(pAuxBinario,sizeof(Passenger),1,pFile) == 1)
 				{
 					ll_add(pArrayListPassenger, pAuxBinario);
 				}
-				else
-				{
-					retorno = 0;
-					break;
-				}
 			}while(!feof(pFile));
+			retorno = 1;
 		}
 	}
 	free(pAuxBinario);
