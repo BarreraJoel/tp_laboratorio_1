@@ -722,6 +722,10 @@ int Passenger_getCodigoVuelo(Passenger* this,char* codigoVuelo)
 
 		retorno = 0;
 	}
+	else
+	{
+		printf("\nno puede obtener el codigo");
+	}
 	return retorno;
 }
 

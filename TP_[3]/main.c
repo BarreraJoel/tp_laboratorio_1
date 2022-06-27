@@ -38,23 +38,11 @@ int main()
                 case 1:
                 	if(banderaOpcionUno == 0 && banderaOpcionDos == 0)
                 	{
-                		if(banderaOpcionTres == 1)
-                		{
-                			controller_reordenarID(listaPasajeros);
-        					if(controller_loadFromText("data.csv",listaPasajeros) == 1)
-        					{
-        						printf("\n*** Se cargo la lista de pasajeros con exito (txt) ***\n");
-        						banderaOpcionUno = 1;
-        					}
-                		}
-                		else
-                		{
-        					if(controller_loadFromText("data.csv",listaPasajeros) == 1)
-        					{
-        						printf("\n*** Se cargo la lista de pasajeros con exito (txt) ***\n");
-        						banderaOpcionUno = 1;
-        					}
-                		}
+						if(controller_loadFromText("data.csv",listaPasajeros) == 1)
+						{
+							printf("\n*** Se cargo la lista de pasajeros con exito (txt) ***\n");
+							banderaOpcionUno = 1;
+						}
                 	}
                 	else
                 	{

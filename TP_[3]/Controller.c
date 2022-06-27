@@ -9,7 +9,7 @@
 
 /** \brief Carga los datos de los pasajeros desde el archivo data.csv (modo texto).
  *
- * \param path char* Cadena de caracteres donde se escribe la ubicacion y nombre del archivo
+ * \param path char* Cadena de} caracteres donde se escribe la ubicacion y nombre del archivo
  * \param pArrayListPassenger LinkedList*
  * \return int Retorna -1 [Punteros NULL o Lectura no completada] 1 [OK]
  *
@@ -55,18 +55,6 @@ int controller_loadFromBinary(char* path , LinkedList* pArrayListPassenger)
 	}
 
     return retorno;
-}
-
-int controller_reordenarID(LinkedList* pArrayListPassenger)
-{
-	int retorno = -1;
-
-	if(pArrayListPassenger != NULL)
-	{
-
-	}
-
-	return retorno;
 }
 
 /** \brief Alta de pasajero
